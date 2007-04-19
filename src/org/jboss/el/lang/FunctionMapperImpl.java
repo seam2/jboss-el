@@ -149,6 +149,7 @@ public class FunctionMapperImpl extends FunctionMapper implements
                     Class[] p = ReflectionUtil.toTypeArray(this.types);
                     this.m = t.getMethod(this.name, p);
                 } catch (Exception e) {
+                    // This is a pita as it causes NPEs elsewhere.
                     e.printStackTrace();
                 }
             }
