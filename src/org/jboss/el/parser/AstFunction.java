@@ -75,8 +75,9 @@ public final class AstFunction extends SimpleNode {
                     this.getOutputName()));
         }
         
-        Object[] params = new Object[this.children.length];
-        for (int i = 0; i < this.children.length; i++) {
+        // If no params, there are no children, jjtGetNumChildren returns 0 if no children, not NPE
+        Object[] params = new Object[this.jjtGetNumChildren()];
+        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
             params[i] = this.children[i].getValue(ctx);
         }
         

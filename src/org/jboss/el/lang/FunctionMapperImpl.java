@@ -120,10 +120,9 @@ public class FunctionMapperImpl extends FunctionMapper implements
         public void writeExternal(ObjectOutput out) throws IOException {
             out.writeUTF((this.prefix != null) ? this.prefix : "");
             out.writeUTF(this.localName);
-
-            out.writeUTF(this.getMethod().getDeclaringClass().getName());
-            out.writeUTF(this.getMethod().getName());
-            out.writeObject(ReflectionUtil.toTypeNameArray(this.getMethod().getParameterTypes()));
+			out.writeUTF(this.getMethod().getDeclaringClass().getName());
+			out.writeUTF(this.getMethod().getName());
+	        out.writeObject(ReflectionUtil.toTypeNameArray(this.getMethod().getParameterTypes()));		
         }
     
         /*
@@ -144,14 +143,13 @@ public class FunctionMapperImpl extends FunctionMapper implements
     
         public Method getMethod() {
             if (this.m == null) {
-                try {
-                    Class t = Class.forName(this.owner);
-                    Class[] p = ReflectionUtil.toTypeArray(this.types);
-                    this.m = t.getMethod(this.name, p);
-                } catch (Exception e) {
-                    // This is a pita as it causes NPEs elsewhere.
-                    e.printStackTrace();
-                }
+            	try {
+            		Class t = Class.forName(this.owner);
+            		Class[] p = ReflectionUtil.toTypeArray(this.types);
+            		this.m = t.getMethod(this.name, p);
+            	} catch (Exception e) {
+            		throw new RuntimeException("Error loading function", e);
+				}
             }
             return this.m;
         }
