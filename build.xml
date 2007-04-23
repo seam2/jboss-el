@@ -13,6 +13,7 @@
         <mkdir dir="dist" />
         <jar jarfile="dist/jboss-el.jar" basedir="build/classes">
             <include name="org/jboss/**/*.class"/>
+            <include name="org/jboss/**/*.properties"/>
         </jar>
         <jar jarfile="dist/jboss-el-api.jar" basedir="build/classes">
             <include name="javax/**/*.class"/>
@@ -30,6 +31,11 @@
                nowarn="on">
             <src path="src"/>
         </javac>
+    	<copy todir="build/classes">
+    		<fileset dir="src">
+    			<include name="**/*.properties"/>
+    		</fileset>
+    	</copy>
     </target>
 
     <target name="compiletest">
