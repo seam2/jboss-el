@@ -1,15 +1,10 @@
 <?xml version="1.0"?>
 
 <project name="jboss-el" default="build" basedir=".">
-    <!--
-        src -> build/classes
-        build/test
-        dist/jboss-el.jar
-    -->
     <property name="javac.debug"          value="true"/>
     <property name="javac.deprecation"    value="false"/>
 
-    <target name="build" depends="compileclasses">
+    <target name="build" depends="compileclasses,compiletest">
         <mkdir dir="dist" />
         <jar jarfile="dist/jboss-el.jar" basedir="build/classes">
             <include name="org/jboss/**/*.class"/>
@@ -18,6 +13,9 @@
         <jar jarfile="dist/jboss-el-api.jar" basedir="build/classes">
             <include name="javax/**/*.class"/>
         </jar>
+        <jar jarfile="dist/jboss-el-test.jar" basedir="build/test">
+        </jar>
+
     </target>
 
 
