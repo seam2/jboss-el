@@ -16,25 +16,23 @@
  */
 package org.jboss.el.util;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import javax.el.ELException;
 import javax.el.MethodInfo;
 import javax.el.MethodNotFoundException;
-import javax.el.PropertyNotFoundException;
 
 import org.jboss.el.lang.ELSupport;
+
+import com.sun.org.apache.xpath.internal.operations.Mod;
 
 /**
  * Utilities for Managing Serialization and Reflection
@@ -154,11 +152,16 @@ public final class ReflectionUtil {
         private final Class type;
         private final Map<String,Object> cache;
         public MethodCache(Class type) {
+            boolean isAnonymous = type.isAnonymousClass();
+
             this.type = type;
             this.methods = type.getMethods();
             this.cache = new HashMap<String,Object>();
             Object c;
             for (Method m : this.methods) {
+                if (isAnonymous && Modifier.isPublic(m.getModifiers())) {
+                    m.setAccessible(true);                    
+                }
                 c = this.cache.get(m.getName());
                 if (c == null) {
                     this.cache.put(m.getName(), m);
