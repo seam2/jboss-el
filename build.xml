@@ -12,6 +12,7 @@
         </jar>
         <jar jarfile="dist/jboss-el-api.jar" basedir="build/classes">
             <include name="javax/**/*.class"/>
+        	<include name="javax/**/*.properties"/>
         </jar>
         <jar jarfile="dist/jboss-el-test.jar" basedir="build/test">
         </jar>
