@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- Continuous integration related targets -->
+<project name="JBoss EL Continuous Integration Support" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+	
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
+	
+	<artifact:remoteRepository id="snapshots.jboss.org" url="dav:https://snapshots.jboss.org/maven2" />
+
+	<target name="initdav">
+		<artifact:install-provider artifactId="wagon-webdav" version="1.0-beta-2" />
+	</target>
+
+	<target name="deployJBossELSnapshot" description="Deploy a JBoss EL snapshot to snapshots.jboss.org" depends="initdav">		
+		<deploySnapshot pom="pom.xml" jar="dist/jboss-el.jar" srcjar="dist/jboss-el-sources.jar" />
+	</target>
+
+	<target name="tests">
+		<build target="clean" />
+		<build target="test" />
+	</target>
+
+	<target name="snapshot">
+		<build target="clean" />
+		<build target="build" />
+		<ant target="deployJBossELSnapshot" antfile="${ant.file}" inheritall="false" inheritrefs="false" dir="." />
+		<ant target="tests" antfile="${ant.file}" inheritall="false" inheritrefs="false" dir="." />
+	</target>
+
+	<macrodef name="build">
+		<attribute name="target" />
+		<sequential>
+			<ant antfile="build.xml" target="@{target}" inheritall="false" inheritrefs="false" dir="." />
+		</sequential>
+	</macrodef>
+
+    <macrodef name="deploySnapshotPom">
+      <attribute name="pom" />
+      <sequential>
+        <artifact:deploy uniqueVersion="false">
+          <pom file="@{pom}" />
+          <remoteRepository refid="snapshots.jboss.org" />
+        </artifact:deploy>
+      </sequential>
+    </macrodef>
+    
+
+	<macrodef name="deploySnapshot">
+		<attribute name="pom" />
+		<attribute name="jar" />
+        <attribute name="srcjar" />
+		<sequential>
+			<artifact:deploy file="@{jar}" uniqueVersion="false">
+				<pom file="@{pom}" />
+                <attach file="@{srcjar}" classifier="sources" />
+				<remoteRepository refid="snapshots.jboss.org" />
+			</artifact:deploy>
+		</sequential>
+	</macrodef>
+
+</project>
