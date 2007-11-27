@@ -153,13 +153,14 @@ public final class ReflectionUtil {
         private final Map<String,Object> cache;
         public MethodCache(Class type) {
             boolean isAnonymous = type.isAnonymousClass();
+            boolean isPrivate = !Modifier.isPublic(type.getModifiers());
 
             this.type = type;
             this.methods = type.getMethods();
             this.cache = new HashMap<String,Object>();
             Object c;
             for (Method m : this.methods) {
-                if (isAnonymous && Modifier.isPublic(m.getModifiers())) {
+                if ((isPrivate || isAnonymous) && Modifier.isPublic(m.getModifiers())) {
                     m.setAccessible(true);                    
                 }
                 c = this.cache.get(m.getName());
