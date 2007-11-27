@@ -3,67 +3,102 @@
 <project name="jboss-el" default="build" basedir=".">
     <property name="javac.debug"          value="true"/>
     <property name="javac.deprecation"    value="false"/>
+    
+    <property name="src.dir" value="${basedir}/src" />
+	<property name="test.src.dir" value="${basedir}/test" />
+	<property name="dist.dir" value="${basedir}/dist" />
+	<property name="temp.dir" value="${basedir}/build" />
+	<property name="classes.dir" value="${temp.dir}/classes" />
+	<property name="testclasses.dir" value="${temp.dir}/testclasses" />
+	<property name="report.dir" value="${basedir}/report" />
+	<property name="test-output.dir" value="${temp.dir}/test-output" />
+	<path id="junit.jar" location="lib/junit-4.2.jar" />
 
     <target name="build" depends="compileclasses,compiletest">
-        <mkdir dir="dist" />
-        <jar jarfile="dist/jboss-el.jar" basedir="build/classes">
+        <mkdir dir="${dist.dir}" />
+        <jar jarfile="${dist.dir}/jboss-el.jar" basedir="${classes.dir}">
             <include name="org/jboss/**/*.class"/>
             <include name="org/jboss/**/*.properties"/>
         </jar>
-        <jar jarfile="dist/jboss-el-sources.jar" basedir="src">
+        <jar jarfile="${dist.dir}/jboss-el-sources.jar" basedir="${src.dir}">
             <include name="org/jboss/**/*.java" />
             <include name="org/jboss/**/*.properties" />
         </jar>
-        <jar jarfile="dist/jboss-el-api.jar" basedir="build/classes">
+        <jar jarfile="${dist.dir}/jboss-el-api.jar" basedir="${classes.dir}">
             <include name="javax/**/*.class"/>
         	<include name="javax/**/*.properties"/>
         </jar>
-        <jar jarfile="dist/jboss-el-test.jar" basedir="build/test">
+        <jar jarfile="${dist.dir}/jboss-el-test.jar" basedir="${testclasses.dir}">
         </jar>
 
     </target>
 
 
     <target name="compileclasses">
-        <mkdir dir="build/classes" />
+        <mkdir dir="${classes.dir}" />
         <javac source="1.5"
                target="1.5"
-               destdir="build/classes"
+               destdir="${classes.dir}"
                debug="${javac.debug}"
                deprecation="${javac.deprecation}"
                nowarn="on">
-            <src path="src"/>
+            <src path="${src.dir}"/>
         </javac>
-    	<copy todir="build/classes">
-    		<fileset dir="src">
+    	<copy todir="${classes.dir}">
+    		<fileset dir="${src.dir}">
     			<include name="**/*.properties"/>
     		</fileset>
     	</copy>
     </target>
 
     <target name="compiletest" depends="compileclasses">
-        <mkdir dir="build/test" />
+        <mkdir dir="${testclasses.dir}" />
         <javac source="1.5"
                target="1.5"
-               destdir="build/test"
+               destdir="${testclasses.dir}"
                debug="${javac.debug}"
                deprecation="${javac.deprecation}"
                nowarn="on">
-            <src path="test"/>
+            <src path="${test.src.dir}"/>
             <classpath>
-                <path path="build/classes" />
-                <pathelement location="lib/junit-4.2.jar" />
+                <path path="${classes.dir}" />
+                <path refid="junit.jar"/>
             </classpath>
         </javac>
     </target>
     
     <target name="test" depends="compiletest">
-      
+        <mkdir dir="${test-output.dir}" />
+        <junit printsummary="yes">
+            <classpath>
+                <path path="${classes.dir}" />
+                <path path="${testclasses.dir}" />
+                <path refid="junit.jar" />
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest todir="${test-output.dir}">
+                 <fileset dir="${test.src.dir}">
+                    <include name="**/*TestCase.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+    
+    <target name="testreport" description="Create a pretty report">
+        <mkdir dir="${report.dir}" />
+        <junitreport todir="${report.dir}">
+            <fileset dir="${test-output.dir}">
+                <include name="**/*.xml" />
+            </fileset>
+            <report format="noframes" todir="${report.dir}" />
+        </junitreport>
+        <echo>Report available at ${report.dir}/junit-noframes.html</echo>
     </target>
 
     <target name="clean"> 
-        <delete dir="build" />
-        <delete dir="dist" />
+        <delete dir="${temp.dir}" />
+        <delete dir="${dist.dir}" />
+        <delete dir="${report.dir}"/>
     </target>
 
 </project>
