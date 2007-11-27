@@ -10,6 +10,10 @@
             <include name="org/jboss/**/*.class"/>
             <include name="org/jboss/**/*.properties"/>
         </jar>
+        <jar jarfile="dist/jboss-el-sources.jar" basedir="src">
+            <include name="org/jboss/**/*.java" />
+            <include name="org/jboss/**/*.properties" />
+        </jar>
         <jar jarfile="dist/jboss-el-api.jar" basedir="build/classes">
             <include name="javax/**/*.class"/>
         	<include name="javax/**/*.properties"/>
@@ -37,7 +41,7 @@
     	</copy>
     </target>
 
-    <target name="compiletest">
+    <target name="compiletest" depends="compileclasses">
         <mkdir dir="build/test" />
         <javac source="1.5"
                target="1.5"
@@ -51,6 +55,10 @@
                 <pathelement location="lib/junit-4.2.jar" />
             </classpath>
         </javac>
+    </target>
+    
+    <target name="test" depends="compiletest">
+      
     </target>
 
     <target name="clean"> 
