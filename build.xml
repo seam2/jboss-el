@@ -96,9 +96,9 @@
     </target>
 
     <target name="clean"> 
-        <delete dir="${temp.dir}" />
-        <delete dir="${dist.dir}" />
-        <delete dir="${report.dir}"/>
+        <delete dir="${temp.dir}" quiet="true"/>
+        <delete dir="${dist.dir}" quiet="true"/>
+        <delete dir="${report.dir}" quiet="true"/>
     </target>
 
 </project>
