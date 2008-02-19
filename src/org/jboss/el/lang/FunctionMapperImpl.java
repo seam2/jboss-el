@@ -34,7 +34,7 @@ import org.jboss.el.util.ReflectionUtil;
  * @author Jacob Hookom [jacob@hookom.net]
  * @version $Change: 181177 $$DateTime: 2001/06/26 08:45:09 $$Author: markt $
  */
-public class FunctionMapperImpl extends FunctionMapper implements
+public class FunctionMapperImpl extends ExtendedFunctionMapper implements
         Externalizable {
 
     private static final long serialVersionUID = 1L;
@@ -50,9 +50,17 @@ public class FunctionMapperImpl extends FunctionMapper implements
     public Method resolveFunction(String prefix, String localName) {
         if (this.functions != null) {
             Function f = (Function) this.functions.get(prefix + ":" + localName);
-            return f.getMethod();
+            return f != null ? f.getMethod() : null;
         }
         return null;
+    }
+    
+    public Method resolveFunction(String prefix, String localName, int paramCount) {
+       if (this.functions != null) {
+          Function f = (Function) this.functions.get(prefix + ":" + localName + ":" + paramCount);
+          return f != null ? f.getMethod() : null;
+      }
+      return null;
     }
 
     public void addFunction(String prefix, String localName, Method m) {
@@ -62,6 +70,7 @@ public class FunctionMapperImpl extends FunctionMapper implements
         Function f = new Function(prefix, localName, m);
         synchronized (this) {
             this.functions.put(prefix+":"+localName, f);
+            this.functions.put(prefix+":"+localName+":"+m.getParameterTypes().length, f);
         }
     }
 
