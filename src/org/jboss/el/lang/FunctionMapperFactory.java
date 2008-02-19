@@ -25,7 +25,7 @@ import javax.el.FunctionMapper;
  * @author Jacob Hookom [jacob@hookom.net]
  * @version $Change: 181177 $$DateTime: 2001/06/26 08:45:09 $$Author: markt $
  */
-public class FunctionMapperFactory extends FunctionMapper {
+public class FunctionMapperFactory extends ExtendedFunctionMapper {
 
     protected FunctionMapperImpl memento = null;
     protected FunctionMapper target;
@@ -51,6 +51,27 @@ public class FunctionMapperFactory extends FunctionMapper {
         }
         return m;
     }
+    
+    public Method resolveFunction(String prefix, String localName, int paramCount) {
+       if (this.memento == null) {
+           this.memento = new FunctionMapperImpl();
+       }
+       
+       Method m;
+       if (this.target instanceof ExtendedFunctionMapper)
+       {
+          m = ((ExtendedFunctionMapper) this.target).resolveFunction(prefix, localName, paramCount);
+       }
+       else
+       {       
+          m = this.target.resolveFunction(prefix, localName);
+       }
+       
+       if (m != null) {
+           this.memento.addFunction(prefix, localName, m);
+       }
+       return m;
+   }
     
     public FunctionMapper create() {
         return this.memento;

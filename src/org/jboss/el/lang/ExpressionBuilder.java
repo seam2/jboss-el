@@ -170,8 +170,19 @@ public final class ExpressionBuilder implements NodeVisitor {
 			if (this.fnMapper == null) {
 				throw new ELException(MessageFactory.get("error.fnMapper.null"));
 			}
-			Method m = fnMapper.resolveFunction(funcNode.getPrefix(), funcNode
-					.getLocalName());
+			
+			Method m = null;
+			
+			if (fnMapper instanceof ExtendedFunctionMapper)
+			{
+			   m = ((ExtendedFunctionMapper) fnMapper).resolveFunction(funcNode.getPrefix(), 
+			         funcNode.getLocalName(), node.jjtGetNumChildren());    
+			}
+			else
+			{
+			   m = fnMapper.resolveFunction(funcNode.getPrefix(), funcNode.getLocalName());
+			}
+			
 			if (m == null) {
 				throw new ELException(MessageFactory.get(
 						"error.fnMapper.method", funcNode.getOutputName()));
