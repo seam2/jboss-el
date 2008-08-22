@@ -3,6 +3,9 @@
 <project name="jboss-el" default="build" basedir=".">
 	<property name="javac.debug" value="true" />
 	<property name="javac.deprecation" value="false" />
+	
+	<property name="specification.version" value="1.0" />
+	<property name="implementation.version" value="${specification.version}_02.CR2" />
 
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="test.src.dir" value="${basedir}/test" />
@@ -19,16 +22,36 @@
 		<jar jarfile="${dist.dir}/jboss-el.jar" basedir="${classes.dir}">
 			<include name="org/jboss/**/*.class" />
 			<include name="org/jboss/**/*.properties" />
+			<manifest>
+            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
+            <attribute name="Implementation-Version" value="${implementation.version}" />
+				<attribute name="Specification-Version" value="${specification.version}" />
+         </manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-sources.jar" basedir="${src.dir}">
 			<include name="org/jboss/**/*.java" />
 			<include name="org/jboss/**/*.properties" />
+			<manifest>
+            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
+            <attribute name="Implementation-Version" value="${implementation.version}" />
+            <attribute name="Specification-Version" value="${specification.version}" />
+         </manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-api.jar" basedir="${classes.dir}">
 			<include name="javax/**/*.class" />
 			<include name="javax/**/*.properties" />
+			<manifest>
+            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
+            <attribute name="Implementation-Version" value="${implementation.version}" />
+            <attribute name="Specification-Version" value="${specification.version}" />
+         </manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-test.jar" basedir="${testclasses.dir}">
+			<manifest>
+            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
+            <attribute name="Implementation-Version" value="${implementation.version}" />
+            <attribute name="Specification-Version" value="${specification.version}" />
+         </manifest>
 		</jar>
 
 	</target>
