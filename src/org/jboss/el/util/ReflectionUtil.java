@@ -51,11 +51,23 @@ public final class ReflectionUtil {
     byte.class, char.class, double.class, float.class, int.class,
     long.class, short.class, Void.TYPE };
     
-    /**
-     *
-     */
+    
+    private static ReferenceCache<Class, MethodCache> methodCache = new ReferenceCache<Class, MethodCache>(ReferenceCache.Type.Weak, ReferenceCache.Type.Soft) {
+        public MethodCache create(Class key) {
+            return new MethodCache(key);
+        }
+    };
+    
     private ReflectionUtil() {
         super();
+    }
+    
+    public static void startup() {
+        methodCache.startMonitor();
+    }
+    
+    public static void shutdown() {
+        methodCache.stopMonitor();
     }
     
     public static Class forName(String name) throws ClassNotFoundException {
@@ -66,12 +78,10 @@ public final class ReflectionUtil {
         if (c == null) {
             if (name.endsWith("[]")) {
                 String nc = name.substring(0, name.length() - 2);
-                c = Class.forName(nc, true, Thread.currentThread()
-                .getContextClassLoader());
+                c = Class.forName(nc, true, Thread.currentThread().getContextClassLoader());
                 c = Array.newInstance(c, 0).getClass();
             } else {
-                c = Class.forName(name, true, Thread.currentThread()
-                .getContextClassLoader());
+                c = Class.forName(name, true, Thread.currentThread().getContextClassLoader());
             }
         }
         return c;
@@ -141,11 +151,7 @@ public final class ReflectionUtil {
         return 0;
     }
     
-    private static ReferenceCache<Class, MethodCache> methodCache = new ReferenceCache<Class, MethodCache>(ReferenceCache.Type.Weak, ReferenceCache.Type.Soft) {
-    	public MethodCache create(Class key) {
-    		return new MethodCache(key);
-    	}
-    };
+
     
     private static final class MethodCache {
         private final Method[] methods;

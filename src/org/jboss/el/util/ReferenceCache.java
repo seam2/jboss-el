@@ -13,11 +13,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,10 +24,7 @@ import java.util.concurrent.FutureTask;
  * @author jhook
  */
 public abstract class ReferenceCache<K,V> {
-    
-	/*
-	 * 
-	 */
+
     public abstract class ReferenceFactory<K,V> {
         public abstract ReferenceKey<K> createKey(ReferenceQueue queue, K key);
         public abstract ReferenceValue<V> createValue(ReferenceQueue queue, V value);
@@ -156,28 +148,32 @@ public abstract class ReferenceCache<K,V> {
     public interface ReferenceValue<V> {
         public V get();
     }
-    
-    private class ReferenceQueueRunner extends ReferenceQueue implements Runnable {
-        public void run() {
-            Reference ref = null;
+
+    private class ReferenceQueueRunner 
+        extends ReferenceQueue 
+        implements Runnable
+    {
+        public void run() {            
             while (true) {
                 try {
-                    ref = this.remove();
+                    Reference ref = this.remove();
                     if (ref != null) {
                         ref.clear();
                     }
                 } catch (InterruptedException e) {
+                    break;
                     //e.printStackTrace();
                 }
             }
         }
     }
-    
+
     private final ConcurrentMap<ReferenceKey<K>,Future<ReferenceValue<V>>> cache;
     private final ReferenceFactory keyFactory;
     private final ReferenceFactory valueFactory;
     private final ReferenceFactory lookupFactory;
     private final ReferenceQueueRunner queue;
+    private Thread queueMonitor;
     
     public static enum Type { Strong, Weak, Soft };
     
@@ -194,9 +190,23 @@ public abstract class ReferenceCache<K,V> {
         this.lookupFactory = new StrongReferenceFactory();
         this.cache = new ConcurrentHashMap<ReferenceKey<K>,Future<ReferenceValue<V>>>(initialSize);
         this.queue = new ReferenceQueueRunner();
-        Thread t = new Thread(this.queue);
-        t.setDaemon(true);
-        t.start();
+    }
+    
+    
+    public void startMonitor() {
+        if (queueMonitor == null) {
+            queueMonitor = new Thread(this.queue);
+            queueMonitor.setName("jboss EL reference queue cleanup thread");
+            queueMonitor.setDaemon(true);        
+            queueMonitor.start();
+        }
+    }
+    
+    public void stopMonitor() {
+        if (queueMonitor!=null) {
+            queueMonitor.interrupt();
+            queueMonitor = null;
+        }
     }
     
     private final ReferenceFactory<K,V> toFactory(Type type) {
