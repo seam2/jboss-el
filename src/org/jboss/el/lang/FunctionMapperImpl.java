@@ -25,8 +25,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.el.FunctionMapper;
-
 import org.jboss.el.util.ReflectionUtil;
 
 
@@ -34,12 +32,14 @@ import org.jboss.el.util.ReflectionUtil;
  * @author Jacob Hookom [jacob@hookom.net]
  * @version $Change: 181177 $$DateTime: 2001/06/26 08:45:09 $$Author: markt $
  */
-public class FunctionMapperImpl extends ExtendedFunctionMapper implements
-        Externalizable {
+public class FunctionMapperImpl 
+    extends ExtendedFunctionMapper 
+    implements Externalizable 
+{
 
     private static final long serialVersionUID = 1L;
     
-    protected Map functions = null;
+    protected Map<String,Function> functions = null;
 
     /*
      * (non-Javadoc)
@@ -57,7 +57,7 @@ public class FunctionMapperImpl extends ExtendedFunctionMapper implements
     
     public Method resolveFunction(String prefix, String localName, int paramCount) {
        if (this.functions != null) {
-          Function f = (Function) this.functions.get(prefix + ":" + localName + ":" + paramCount);
+          Function f =  this.functions.get(prefix + ":" + localName + ":" + paramCount);
           return f != null ? f.getMethod() : null;
       }
       return null;
@@ -65,7 +65,7 @@ public class FunctionMapperImpl extends ExtendedFunctionMapper implements
 
     public void addFunction(String prefix, String localName, Method m) {
         if (this.functions == null) {
-            this.functions = new HashMap();
+            this.functions = new HashMap<String,Function>();
         }
         Function f = new Function(prefix, localName, m);
         synchronized (this) {
@@ -88,9 +88,10 @@ public class FunctionMapperImpl extends ExtendedFunctionMapper implements
      * 
      * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
      */
+    @SuppressWarnings("unchecked")
     public void readExternal(ObjectInput in) throws IOException,
             ClassNotFoundException {
-        this.functions = (Map) in.readObject();
+        this.functions = (Map<String,Function>) in.readObject();
     }
     
     public static class Function implements Externalizable {
@@ -153,8 +154,8 @@ public class FunctionMapperImpl extends ExtendedFunctionMapper implements
         public Method getMethod() {
             if (this.m == null) {
             	try {
-            		Class t = Class.forName(this.owner);
-            		Class[] p = ReflectionUtil.toTypeArray(this.types);
+            		Class<?> t = ReflectionUtil.forName(this.owner); 
+            		Class<?>[] p = ReflectionUtil.toTypeArray(this.types);
             		this.m = t.getMethod(this.name, p);
             	} catch (Exception e) {
             		throw new RuntimeException("Error loading function", e);
