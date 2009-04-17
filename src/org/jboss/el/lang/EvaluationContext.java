@@ -19,7 +19,6 @@ package org.jboss.el.lang;
 
 import javax.el.ELContext;
 import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
 import javax.el.FunctionMapper;
 import javax.el.VariableMapper;
 
