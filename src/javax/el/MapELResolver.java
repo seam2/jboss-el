@@ -27,8 +27,8 @@ import java.util.Map;
 
 public class MapELResolver extends ELResolver {
 
-	private final static Class UNMODIFIABLE = Collections.unmodifiableMap(
-			new HashMap()).getClass();
+	@SuppressWarnings("unchecked")
+    private final static Class UNMODIFIABLE = Collections.unmodifiableMap(new HashMap()).getClass();
 
 	private final boolean readOnly;
 
@@ -47,8 +47,12 @@ public class MapELResolver extends ELResolver {
 		}
 
 		if (base instanceof Map) {
-			context.setPropertyResolved(true);
-			return ((Map) base).get(property);
+			Object result = ((Map<?,?>) base).get(property);
+		    
+			if (result != null) {
+			    context.setPropertyResolved(true);
+			    return result;
+			}		
 		}
 		
 		return null;
@@ -62,14 +66,15 @@ public class MapELResolver extends ELResolver {
 
 		if (base instanceof Map) {
 			context.setPropertyResolved(true);
-			Object obj = ((Map) base).get(property);
+			Object obj = ((Map<?,?>) base).get(property);
 			return (obj != null) ? obj.getClass() : null;
 		}
 		
 		return null;
 	}
 
-	public void setValue(ELContext context, Object base, Object property,
+	@SuppressWarnings("unchecked")
+    public void setValue(ELContext context, Object base, Object property,
 			Object value) throws NullPointerException,
 			PropertyNotFoundException, PropertyNotWritableException,
 			ELException {
@@ -82,8 +87,7 @@ public class MapELResolver extends ELResolver {
 
 			if (this.readOnly) {
 				throw new PropertyNotWritableException(message(context,
-						"resolverNotWriteable", new Object[] { base.getClass()
-								.getName() }));
+						"resolverNotWriteable", new Object[] { base.getClass().getName() }));
 			}
 
 			try {
@@ -110,7 +114,7 @@ public class MapELResolver extends ELResolver {
 
 	public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
 		if (base instanceof Map) {
-			Iterator itr = ((Map) base).keySet().iterator();
+			Iterator<?> itr = ((Map<?,?>) base).keySet().iterator();
 			List<FeatureDescriptor> feats = new ArrayList<FeatureDescriptor>();
 			Object key;
 			FeatureDescriptor desc;
