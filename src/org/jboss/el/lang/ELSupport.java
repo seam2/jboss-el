@@ -21,12 +21,9 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.el.ELContext;
 
 import javax.el.ELException;
 import javax.el.PropertyNotFoundException;
-import org.jboss.el.MethodResolver;
-import org.jboss.el.TypeResolver;
 
 import org.jboss.el.util.MessageFactory;
 
@@ -38,8 +35,7 @@ import org.jboss.el.util.MessageFactory;
  * @version $Change: 181177 $$DateTime: 2001/06/26 08:45:09 $$Author: markt $
  */
 public class ELSupport {
-
-    private final static ELSupport REF = new ELSupport();
+    // private final static ELSupport REF = new ELSupport();
 
     private final static Long ZERO = new Long(0L);
 
@@ -153,7 +149,7 @@ public class ELSupport {
             return null;
         }
         if (obj.getClass().isEnum()) {
-            return (Enum) obj;
+            return (Enum<?>) obj;
         }
         return Enum.valueOf(type, obj.toString());
     }
@@ -189,7 +185,7 @@ public class ELSupport {
         if (ELArithmetic.isNumber(obj)) {
             return new Character((char) ((Number) obj).shortValue());
         }
-        Class objType = obj.getClass();
+        Class<?> objType = obj.getClass();
         if (obj instanceof Character || objType == Character.TYPE) {
             return (Character) obj;
         }
@@ -214,7 +210,7 @@ public class ELSupport {
     }
 
     protected final static Number coerceToNumber(final Number number,
-            final Class type) throws IllegalArgumentException {
+            final Class<?> type) throws IllegalArgumentException {
         if (Long.TYPE == type || Long.class.equals(type)) {
             return new Long(number.longValue());
         }
@@ -250,11 +246,12 @@ public class ELSupport {
                 number, number.getClass(), type));
     }
 
-    public final static Number coerceToNumber(final Object obj, final Class type)
+    public final static Number coerceToNumber(final Object obj, final Class<?> type)
             throws IllegalArgumentException {
         if (obj == null || "".equals(obj)) {
             return coerceToNumber(ZERO, type);
-        }
+        }     
+
         if (obj instanceof String) {
             return coerceToNumber((String) obj, type);
         }
@@ -262,7 +259,7 @@ public class ELSupport {
             return coerceToNumber((Number) obj, type);
         }
 
-        Class objType = obj.getClass();
+        Class<?> objType = obj.getClass();
         if (Character.class.equals(objType) || Character.TYPE == objType) {
             return coerceToNumber(new Short((short) ((Character) obj)
                     .charValue()), type);
@@ -273,7 +270,7 @@ public class ELSupport {
     }
 
     protected final static Number coerceToNumber(final String val,
-            final Class type) throws IllegalArgumentException {
+            final Class<?> type) throws IllegalArgumentException {
         if (Long.TYPE == type || Long.class.equals(type)) {
             return Long.valueOf(val);
         }
@@ -313,17 +310,22 @@ public class ELSupport {
         } else if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof Enum) {
-            return ((Enum) obj).name();
+            return ((Enum<?>) obj).name();
         } else {
             return obj.toString();
         }
     }
 
-    public final static Object coerceToType(final Object obj, final Class type)
+    public final static Object coerceToType(final Object obj, final Class<?> type)
             throws IllegalArgumentException {
         if (type == null || Object.class.equals(type)) {
             return obj;
         }
+        
+        if (obj!=null && obj.getClass().equals(type)) {   
+            return obj;
+        }
+        
         if (String.class.equals(type)) {
             return coerceToString(obj);
         }
@@ -424,9 +426,8 @@ public class ELSupport {
     public final static boolean isStringFloat(final String str) {
         int len = str.length();
         if (len > 1) {
-            char c = 0;
             for (int i = 0; i < len; i++) {
-                switch (c = str.charAt(i)) {
+                switch (str.charAt(i)) {
                 case 'E':
                     return true;
                 case 'e':
@@ -462,12 +463,4 @@ public class ELSupport {
             }
         }
     }
-
-    /**
-     * 
-     */
-    public ELSupport() {
-        super();
-    }
-
 }
