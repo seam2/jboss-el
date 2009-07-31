@@ -5,8 +5,8 @@
 	<property name="javac.deprecation" value="false" />
 	
 	<property name="specification.version" value="1.0" />
-	<property name="implementation.version" value="${specification.version}_02.CR2" />
-
+	<property name="implementation.version" value="${specification.version}_02.CR5" />
+	
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="test.src.dir" value="${basedir}/test" />
 	<property name="dist.dir" value="${basedir}/dist" />
@@ -16,47 +16,47 @@
 	<property name="report.dir" value="${basedir}/report" />
 	<property name="test-output.dir" value="${temp.dir}/test-output" />
 	<path id="junit.jar" location="lib/junit-4.2.jar" />
-
+	
 	<target name="build" depends="compileclasses,compiletest">
 		<mkdir dir="${dist.dir}" />
 		<jar jarfile="${dist.dir}/jboss-el.jar" basedir="${classes.dir}">
 			<include name="org/jboss/**/*.class" />
 			<include name="org/jboss/**/*.properties" />
 			<manifest>
-            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
-            <attribute name="Implementation-Version" value="${implementation.version}" />
+				<attribute name="JBoss-EL-Version" value="${implementation.version}" />
+				<attribute name="Implementation-Version" value="${implementation.version}" />
 				<attribute name="Specification-Version" value="${specification.version}" />
-         </manifest>
+			</manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-sources.jar" basedir="${src.dir}">
 			<include name="org/jboss/**/*.java" />
 			<include name="org/jboss/**/*.properties" />
 			<manifest>
-            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
-            <attribute name="Implementation-Version" value="${implementation.version}" />
-            <attribute name="Specification-Version" value="${specification.version}" />
-         </manifest>
+				<attribute name="JBoss-EL-Version" value="${implementation.version}" />
+				<attribute name="Implementation-Version" value="${implementation.version}" />
+				<attribute name="Specification-Version" value="${specification.version}" />
+			</manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-api.jar" basedir="${classes.dir}">
 			<include name="javax/**/*.class" />
 			<include name="javax/**/*.properties" />
 			<manifest>
-            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
-            <attribute name="Implementation-Version" value="${implementation.version}" />
-            <attribute name="Specification-Version" value="${specification.version}" />
-         </manifest>
+				<attribute name="JBoss-EL-Version" value="${implementation.version}" />
+				<attribute name="Implementation-Version" value="${implementation.version}" />
+				<attribute name="Specification-Version" value="${specification.version}" />
+			</manifest>
 		</jar>
 		<jar jarfile="${dist.dir}/jboss-el-test.jar" basedir="${testclasses.dir}">
 			<manifest>
-            <attribute name="JBoss-EL-Version" value="${implementation.version}" />
-            <attribute name="Implementation-Version" value="${implementation.version}" />
-            <attribute name="Specification-Version" value="${specification.version}" />
-         </manifest>
+				<attribute name="JBoss-EL-Version" value="${implementation.version}" />
+				<attribute name="Implementation-Version" value="${implementation.version}" />
+				<attribute name="Specification-Version" value="${specification.version}" />
+			</manifest>
 		</jar>
-
+		
 	</target>
-
-
+	
+	
 	<target name="compileclasses">
 		<mkdir dir="${classes.dir}" />
 		<javac source="1.5" target="1.5" destdir="${classes.dir}" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="on">
@@ -68,7 +68,7 @@
 			</fileset>
 		</copy>
 	</target>
-
+	
 	<target name="compiletest" depends="compileclasses">
 		<mkdir dir="${testclasses.dir}" />
 		<javac source="1.5" target="1.5" destdir="${testclasses.dir}" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="on">
@@ -79,7 +79,7 @@
 			</classpath>
 		</javac>
 	</target>
-
+	
 	<target name="test" depends="compiletest">
 		<mkdir dir="${test-output.dir}" />
 		<junit printsummary="yes">
@@ -96,7 +96,7 @@
 			</batchtest>
 		</junit>
 	</target>
-
+	
 	<target name="testreport" description="Create a pretty report">
 		<mkdir dir="${report.dir}" />
 		<junitreport todir="${report.dir}">
@@ -107,13 +107,13 @@
 		</junitreport>
 		<echo>Report available at ${report.dir}/junit-noframes.html</echo>
 	</target>
-
+	
 	<target name="clean">
 		<delete dir="${temp.dir}" quiet="true" />
 		<delete dir="${dist.dir}" quiet="true" />
 		<delete dir="${report.dir}" quiet="true" />
 	</target>
-
+	
 </project>
 
 
