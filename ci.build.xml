@@ -5,7 +5,9 @@
 	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 	
-	<artifact:remoteRepository id="snapshots.jboss.org" url="dav:https://snapshots.jboss.org/maven2" />
+    <artifact:remoteRepository id="jboss-snapshots-repository" url="dav:https://repository.jboss.org/nexus/content/repositories/snapshots/">
+        <authentication username="manaRH" password="${snapshots.password}" />
+    </artifact:remoteRepository>
 
 	<target name="initdav">
 		<artifact:install-provider artifactId="wagon-webdav" version="1.0-beta-2" />
@@ -53,7 +55,7 @@
 			<artifact:deploy file="@{jar}" uniqueVersion="false">
 				<pom file="@{pom}" />
                 <attach file="@{srcjar}" classifier="sources" />
-				<remoteRepository refid="snapshots.jboss.org" />
+				<remoteRepository refid="jboss-snapshots-repository" />
 			</artifact:deploy>
 		</sequential>
 	</macrodef>
