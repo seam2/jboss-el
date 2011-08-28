@@ -18,6 +18,7 @@
   <scm>
     <connection>http://anonsvn.jboss.org/repos/jboss-el</connection>
     <developerConnection>http://svn.jboss.org/repos/jboss-el</developerConnection>
+    <url>http://anonsvn.jboss.org/repos/jboss-el</url>
   </scm>
   <developers>
     <developer>
@@ -34,4 +35,5 @@
 		<version>1.0</version>
   	</dependency>
   </dependencies>
+  <name>JBoss EL</name>
 </project>
