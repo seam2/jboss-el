@@ -5,8 +5,13 @@
 	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 	
-    <artifact:remoteRepository id="jboss-snapshots-repository" url="dav:https://repository.jboss.org/nexus/content/repositories/snapshots/">
-        <authentication username="hudson-services" password="${snapshots.password}" />
+    <artifact:remoteRepository id="jboss-snapshots-repository" url="dav:https://repository.jboss.org/nexus/content/repositories/snapshots">
+<!--        <authentication username="${username}" password="${snapshots.password}" />-->
+    </artifact:remoteRepository>
+
+    <artifact:remoteRepository id="jboss-staging-repository-group" url="https://repository.jboss.org/nexus/service/local/staging/deploy/maven2">
+
+        <authentication username="${username}" password="${password}" />
     </artifact:remoteRepository>
 
 	<target name="initdav">
@@ -36,7 +41,7 @@
 		</sequential>
 	</macrodef>
 
-    <macrodef name="deploySnapshotPom">
+<!--    <macrodef name="deploySnapshotPom">
       <attribute name="pom" />
       <sequential>
         <artifact:deploy uniqueVersion="false">
@@ -45,7 +50,7 @@
         </artifact:deploy>
       </sequential>
     </macrodef>
-    
+    -->
 
 	<macrodef name="deploySnapshot">
 		<attribute name="pom" />
@@ -55,7 +60,8 @@
 			<artifact:deploy file="@{jar}" uniqueVersion="false">
 				<pom file="@{pom}" />
                 <attach file="@{srcjar}" classifier="sources" />
-				<remoteRepository refid="jboss-snapshots-repository" />
+	<!--			<remoteRepository refid="jboss-snapshots-repository" />-->
+				<remoteRepository refid="jboss-staging-repository-group" />
 			</artifact:deploy>
 		</sequential>
 	</macrodef>
