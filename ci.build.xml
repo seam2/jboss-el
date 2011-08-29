@@ -6,14 +6,13 @@
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 	
     <artifact:remoteRepository id="jboss-snapshots-repository" url="dav:https://repository.jboss.org/nexus/content/repositories/snapshots">
-<!--        <authentication username="${username}" password="${snapshots.password}" />-->
-    </artifact:remoteRepository>
-
-    <artifact:remoteRepository id="jboss-staging-repository-group" url="https://repository.jboss.org/nexus/service/local/staging/deploy/maven2">
-
         <authentication username="${username}" password="${password}" />
     </artifact:remoteRepository>
 
+<!--    <artifact:remoteRepository id="jboss-staging-repository-group" url="https://repository.jboss.org/nexus/service/local/staging/deploy/maven2">
+        <authentication username="${username}" password="${password}" />
+    </artifact:remoteRepository>
+-->
 	<target name="initdav">
 		<artifact:install-provider artifactId="wagon-webdav" version="1.0-beta-2" />
 	</target>
@@ -60,8 +59,8 @@
 			<artifact:deploy file="@{jar}" uniqueVersion="false">
 				<pom file="@{pom}" />
                 <attach file="@{srcjar}" classifier="sources" />
-	<!--			<remoteRepository refid="jboss-snapshots-repository" />-->
-				<remoteRepository refid="jboss-staging-repository-group" />
+				<remoteRepository refid="jboss-snapshots-repository" />
+<!--				<remoteRepository refid="jboss-staging-repository-group" /> -->
 			</artifact:deploy>
 		</sequential>
 	</macrodef>
