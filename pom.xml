@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.el</groupId>
   <artifactId>jboss-el</artifactId>
-  <version>1.0_02.CR6</version>
+  <version>1.0_02.CR7-SNAPSHOT</version>
   <description>JBoss EL is a extended EL implementation, distributed with Seam</description>
   
   
