@@ -5,7 +5,7 @@
 	<property name="javac.deprecation" value="false" />
 	
 	<property name="specification.version" value="1.0" />
-	<property name="implementation.version" value="${specification.version}_02.CR6" />
+	<property name="implementation.version" value="${specification.version}_02.CR7-SNAPSHOT" />
 	
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="test.src.dir" value="${basedir}/test" />
